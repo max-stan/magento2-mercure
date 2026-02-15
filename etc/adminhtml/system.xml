@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="mercure" translate="label" type="text" sortOrder="500" showInDefault="1" showInWebsite="0" showInStore="0">
+            <label>Mercure Hub</label>
+            <tab>service</tab>
+            <resource>MaxStan_Mercure::config</resource>
+            <group id="hub_settings" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Hub Settings</label>
+                <field id="hub_url" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Hub URL</label>
+                    <comment><![CDATA[A direct server URL that handles persistent SSE connections with the clients (e.g http://localhost:8080/.well-known/mercure)]]></comment>
+                </field>
+                <field id="publisher_jwt_secret" translate="label comment" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Publisher JWT Secret</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <comment><![CDATA[Must be the same as MERCURE_PUBLISHER_JWT_KEY. Leave blank if authorization is not required]]></comment>
+                </field>
+                <field id="subscriber_jwt_secret" translate="label comment" type="obscure" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Subscriber JWT Secret</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <comment><![CDATA[Must be the same as MERCURE_SUBSCRIBER_JWT_KEY. Leave blank if authorization is not required]]></comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

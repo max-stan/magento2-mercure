@@ -1,0 +1,122 @@
+<?php
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use MaxStan\Mercure\ViewModel\Mercure;
+
+/** @var Template $block */
+/** @var ViewModelRegistry $viewModels */
+/** @var Escaper $escaper */
+/** @var Mercure $mercureViewModel */
+
+$mercureViewModel = $viewModels->require(Mercure::class);
+?>
+<script>
+    class MercureManager {
+        #hubUrl = '<?= $escaper->escapeHtml($mercureViewModel->getHubUrl()) ?>';
+        #eventSource = null;
+        #topics = new Set();
+        #connected = false;
+
+        addTopic(topic) {
+            this.#topics.add(topic);
+            this.reconnect();
+        }
+
+        deleteTopic(topic) {
+            this.#topics.remove(topic);
+            this.reconnect();
+        }
+
+        /**
+         * Reconnect with current topic list
+         */
+        reconnect() {
+            // Close existing connection
+            if (this.#eventSource) {
+                this.#eventSource.close();
+            }
+
+            // Don't connect if no topics
+            if (this.#topics.size === 0) {
+                this.connected = false;
+                return;
+            }
+
+            // Build URL with all topics
+            const url = new URL(this.#hubUrl);
+            this.#topics.forEach(topic => {
+                url.searchParams.append('topic', topic);
+            });
+
+            // Create new connection
+            this.#eventSource = new EventSource(url.toString(), {
+                withCredentials: true
+            });
+
+            this.#eventSource.onopen = () => {
+                this.connected = true;
+                console.log('Mercure connected to topics: ', Array.from(this.#topics));
+            };
+
+            this.#eventSource.onmessage = this.handleMessage
+
+            this.#eventSource.onerror = (error) => {
+                console.error('Mercure connection error:', error);
+                this.connected = false;
+
+                // Automatic reconnection is handled by EventSource
+            };
+        }
+
+        /**
+         * Handle incoming message and route to subscribers
+         */
+        handleMessage(event) {
+            window.dispatchEvent(
+                new CustomEvent(
+                    `mercure:message`,
+                    { detail: JSON.parse(event.data) }
+                )
+            )
+        }
+
+        /**
+         * Extract topic from event or data
+         */
+        extractTopic(event, data) {
+            // Mercure includes topic in the event
+            if (event.target.url) {
+                const url = new URL(event.target.url);
+                const topics = url.searchParams.getAll('topic');
+                if (topics.length > 0) {
+                    // Match against data if possible
+                    return data.topic || topics[0];
+                }
+            }
+            return data.topic || '';
+        }
+
+        /**
+         * Disconnect completely
+         */
+        disconnect() {
+            if (this.#eventSource) {
+                this.#eventSource.close();
+                this.#eventSource = null;
+            }
+
+            this.#topics.clear();
+            this.#connected = false;
+        }
+
+        isConnected() {
+            return this.connected;
+        }
+    }
+
+    window.MercureManager = new MercureManager();
+</script>

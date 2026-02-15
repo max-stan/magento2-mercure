@@ -1,0 +1,27 @@
+{
+    "name": "max-stan/magento2-mercure",
+    "type": "magento2-module",
+    "description": "Magento 2 module that integrates Symfony Mercure to enable real-time, server-sent event (SSE) publishing capabilities for your e-commerce store.",
+    "keywords": ["mercure", "push", "sse", "updates", "magento2"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Maxim Stanislavskyi",
+            "email": "stanislavskiymaksym@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.3",
+        "magento/framework": "*",
+        "lcobucci/jwt": "^5.6",
+        "symfony/mercure": "^0.7.2"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MaxStan\\Mercure\\": ""
+        }
+    }
+}
