@@ -7,10 +7,10 @@ namespace MaxStan\Mercure\Service;
 use MaxStan\Mercure\Api\MercureTopicsAuthorizationInterface;
 use MaxStan\Mercure\Model\MercureTopicsProvider;
 
-readonly class MercureTopicsAuthorization implements MercureTopicsAuthorizationInterface
+class MercureTopicsAuthorization implements MercureTopicsAuthorizationInterface
 {
     public function __construct(
-        private MercureTopicsProvider $publishTopicProvidersPool
+        private readonly MercureTopicsProvider $publishTopicProvidersPool
     ) {
     }
 

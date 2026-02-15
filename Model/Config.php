@@ -7,15 +7,15 @@ namespace MaxStan\Mercure\Model;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
 
-readonly class Config
+class Config
 {
     private const string MERCURE_HUB_SETTINGS_HUB_URL = 'mercure/hub_settings/hub_url';
     private const string MERCURE_HUB_SETTINGS_PUBLISHER_JWT_SECRET = 'mercure/hub_settings/publisher_jwt_secret';
     private const string MERCURE_HUB_SETTINGS_SUBSCRIBER_JWT_SECRET = 'mercure/hub_settings/subscriber_jwt_secret';
 
     public function __construct(
-        private ScopeConfigInterface $scopeConfig,
-        private EncryptorInterface $encryptor
+        private readonly ScopeConfigInterface $scopeConfig,
+        private readonly EncryptorInterface $encryptor
     ) {
     }
 

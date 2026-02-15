@@ -7,10 +7,10 @@ namespace MaxStan\Mercure\Model;
 use MaxStan\Mercure\Api\PublicTopicsResolverInterface;
 use MaxStan\Mercure\Api\TopicsResolverInterface;
 
-readonly class PublicTopicsResolver implements TopicsResolverInterface, PublicTopicsResolverInterface
+class PublicTopicsResolver implements TopicsResolverInterface, PublicTopicsResolverInterface
 {
     public function __construct(
-        private array $iris = []
+        private readonly array $iris = []
     ) {
     }
 
