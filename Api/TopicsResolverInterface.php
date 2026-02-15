@@ -7,7 +7,7 @@ namespace MaxStan\Mercure\Api;
 /**
  * Returns a list of concrete Mercure topic IRIs that the given customer has permission to publish messages to
  */
-interface TopicsResolver
+interface TopicsResolverInterface
 {
     /**
      * Get authorized to publish messages IRIs for given customer
