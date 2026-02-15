@@ -8,10 +8,10 @@ namespace MaxStan\Mercure\Model;
 use MaxStan\Mercure\Api\MercureTopicsProviderInterface;
 use MaxStan\Mercure\Api\PublicTopicsResolverInterface;
 
-readonly class MercureTopicsProvider implements MercureTopicsProviderInterface
+class MercureTopicsProvider implements MercureTopicsProviderInterface
 {
     public function __construct(
-        private array $publishTopicResolvers = []
+        private readonly array $publishTopicResolvers = []
     ) {
     }
     /**

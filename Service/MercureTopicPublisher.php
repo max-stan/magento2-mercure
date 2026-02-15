@@ -14,14 +14,14 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Mercure\Exception\RuntimeException;
 use Symfony\Component\Mercure\Update;
 
-readonly class MercureTopicPublisher implements MercureTopicPublisherInterface
+class MercureTopicPublisher implements MercureTopicPublisherInterface
 {
     public function __construct(
-        private MercureHubInterface            $mercureHub,
-        private UserContextInterface           $userContext,
-        private MercureTopicsProviderInterface $publishTopicsProvider,
-        private Json                           $json,
-        private LoggerInterface                $logger
+        private readonly MercureHubInterface $mercureHub,
+        private readonly UserContextInterface $userContext,
+        private readonly MercureTopicsProviderInterface $publishTopicsProvider,
+        private readonly Json $json,
+        private readonly LoggerInterface $logger
     ) {
     }
 
