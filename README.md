@@ -6,7 +6,7 @@ to enable real-time, server-sent event (SSE) publishing capabilities for your e-
 [![Packagist](https://img.shields.io/packagist/v/max-stan/magento2-mercure?style=for-the-badge)](https://packagist.org/packages/max-stan/magento2-mercure)
 [![Packagist](https://img.shields.io/packagist/dt/max-stan/magento2-mercure?style=for-the-badge)](https://packagist.org/packages/max-stan/magento2-mercure)
 [![Packagist](https://img.shields.io/packagist/dm/max-stan/magento2-mercure?style=for-the-badge)](https://packagist.org/packages/max-stan/magento2-mercure)
-[![Tests](https://img.shields.io/github/actions/workflow/status/max-stan/magento2-mercure/standards.yml?branch=master&style=for-the-badge&label=tests)](https://github.com/MaxStan/magento2-mercure/actions/workflows/standards.yml)
+[![Tests](https://img.shields.io/github/actions/workflow/status/max-stan/magento2-mercure/standards.yml?branch=master&style=for-the-badge&label=tests)](https://github.com/MaxStan/magento2-mercure/actions/workflows/main.yml)
 
 This module provides a Mercure Hub integration layer for Magento 2, enabling real-time server-sent events (SSE) across
 your storefront and admin panel. It handles JWT-based authentication for both publishing and subscribing, with separate
