@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="mercure" translate="label" sortOrder="370"
+                 showInDefault="1" showInWebsite="1" showInStore="0">
+            <label>Mercure</label>
+            <tab>service</tab>
+            <resource>MaxStan_Mercure::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="10"
+                   showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>General Settings</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="hub_url" translate="label comment" type="text" sortOrder="20"
+                       showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Hub URL</label>
+                    <comment>The Mercure Hub publish endpoint URL.</comment>
+                </field>
+                <field id="jwt_secret" translate="label comment" type="obscure" sortOrder="30"
+                       showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>JWT Secret</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <comment>Shared secret between Magento and the Mercure Hub (HMAC).</comment>
+                </field>
+                <field id="jwt_algorithm" translate="label" type="select" sortOrder="40"
+                       showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>JWT Algorithm</label>
+                    <source_model>MaxStan\Mercure\Model\Config\Source\Algorithm</source_model>
+                </field>
+                <field id="jwt_ttl" translate="label comment" type="text" sortOrder="60"
+                       showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>JWT TTL (seconds)</label>
+                    <comment>Token lifetime in seconds.</comment>
+                    <validate>validate-digits</validate>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <mercure>
+            <general>
+                <enabled>0</enabled>
+                <hub_url>http://localhost:3000/.well-known/mercure</hub_url>
+                <jwt_algorithm>hmac.sha256</jwt_algorithm>
+                <publish_topics>*</publish_topics>
+                <jwt_ttl>3600</jwt_ttl>
+            </general>
+        </mercure>
+    </default>
+</config>
