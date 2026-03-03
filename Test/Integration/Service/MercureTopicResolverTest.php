@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MaxStan\Mercure\Test\Integration\Service;
 
+use Magento\Authorization\Model\UserContextInterface;
 use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\Helper\Bootstrap;
 use MaxStan\Mercure\Service\MercureTopicResolver;
@@ -61,7 +62,7 @@ class MercureTopicResolverTest extends TestCase
 
         $this->assertSame(
             ['https://example.com/private/user/42/messages'],
-            $resolver->getAllowedPrivateTopics(42)
+            $resolver->getAllowedPrivateTopics(42, UserContextInterface::USER_TYPE_CUSTOMER)
         );
     }
 
@@ -77,7 +78,7 @@ class MercureTopicResolverTest extends TestCase
             ],
         ]);
 
-        $topics = $resolver->getAllAllowedTopics(42);
+        $topics = $resolver->getAllAllowedTopics(42, UserContextInterface::USER_TYPE_CUSTOMER);
 
         $this->assertContains('https://example.com/public/notifications', $topics);
         $this->assertContains('https://example.com/private/user/42/messages', $topics);
@@ -96,7 +97,7 @@ class MercureTopicResolverTest extends TestCase
             ],
         ]);
 
-        $topics = $resolver->getAllAllowedTopics(null);
+        $topics = $resolver->getAllAllowedTopics(null, null);
 
         $this->assertContains('https://example.com/public/notifications', $topics);
         $this->assertCount(1, $topics);

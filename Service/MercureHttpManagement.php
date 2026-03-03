@@ -5,24 +5,24 @@ declare(strict_types=1);
 namespace MaxStan\Mercure\Service;
 
 use Magento\Authorization\Model\UserContextInterface;
-use Magento\Framework\App\Response\HttpInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Framework\Webapi\Rest\Response;
 use MaxStan\Mercure\Api\MercureHttpManagementInterface;
 use MaxStan\Mercure\Model\Config;
-use MaxStan\Mercure\Model\Jwt\TokenProvider;
+use MaxStan\Mercure\Model\Jwt\SubscriberTokenProvider;
 use Psr\Log\LoggerInterface;
 
 readonly class MercureHttpManagement implements MercureHttpManagementInterface
 {
     public function __construct(
-        private HttpInterface $response,
+        private Response $response,
         private Config $config,
         private CookieManagerInterface $cookieManager,
         private CookieMetadataFactory $cookieMetadataFactory,
         private LoggerInterface $logger,
-        private TokenProvider $tokenProvider,
+        private SubscriberTokenProvider $tokenProvider,
         private UserContextInterface $userContext
     ) {
     }
@@ -46,7 +46,7 @@ readonly class MercureHttpManagement implements MercureHttpManagementInterface
         $jwt = $this->tokenProvider->getJwt();
 
         $metadata = $this->cookieMetadataFactory->createSensitiveCookieMetadata()
-            ->setPath($this->config->getHubUrl())
+            ->setPath('/')
             ->setSameSite('Strict');
 
         try {

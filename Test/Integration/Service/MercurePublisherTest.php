@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MaxStan\Mercure\Test\Integration\Service;
 
+use Magento\Framework\Exception\LocalizedException;
 use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -25,7 +26,7 @@ class MercurePublisherTest extends TestCase
      * Verify publish returns empty string and hub is never called when disabled.
      */
     #[Config('mercure/general/hub_url', 'https://hub.test/.well-known/mercure', 'store', 'default')]
-    #[Config('mercure/general/jwt_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
     #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testPublishReturnsEmptyStringWhenDisabled(): void
     {
@@ -42,7 +43,7 @@ class MercurePublisherTest extends TestCase
      */
     #[Config('mercure/general/enabled', '1', 'store', 'default')]
     #[Config('mercure/general/hub_url', 'https://hub.test/.well-known/mercure', 'store', 'default')]
-    #[Config('mercure/general/jwt_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
     #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testPublishCallsHubWithCorrectUpdate(): void
     {
@@ -64,7 +65,7 @@ class MercurePublisherTest extends TestCase
      */
     #[Config('mercure/general/enabled', '1', 'store', 'default')]
     #[Config('mercure/general/hub_url', 'https://hub.test/.well-known/mercure', 'store', 'default')]
-    #[Config('mercure/general/jwt_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
     #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testPublishReturnsHubResponseId(): void
     {
@@ -82,7 +83,7 @@ class MercurePublisherTest extends TestCase
      */
     #[Config('mercure/general/enabled', '1', 'store', 'default')]
     #[Config('mercure/general/hub_url', 'https://hub.test/.well-known/mercure', 'store', 'default')]
-    #[Config('mercure/general/jwt_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
     #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testPublishLogsSuccessAfterPublish(): void
     {
@@ -105,11 +106,11 @@ class MercurePublisherTest extends TestCase
     }
 
     /**
-     * Verify publish logs error and rethrows RuntimeException from hub.
+     * Verify publish logs error and throws LocalizedException on hub failure.
      */
     #[Config('mercure/general/enabled', '1', 'store', 'default')]
     #[Config('mercure/general/hub_url', 'https://hub.test/.well-known/mercure', 'store', 'default')]
-    #[Config('mercure/general/jwt_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
     #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testPublishLogsAndRethrowsOnHubError(): void
     {
@@ -130,8 +131,8 @@ class MercurePublisherTest extends TestCase
 
         $publisher = $this->createPublisher($mockHub, $mockLogger);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Hub unreachable');
+        $this->expectException(LocalizedException::class);
+        $this->expectExceptionMessage('Something went wrong during topic publish');
 
         $publisher->publish('chat/1', ['msg' => 'hello']);
     }

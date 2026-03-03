@@ -8,26 +8,26 @@ use Magento\Authorization\Model\UserContextInterface;
 use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\Helper\Bootstrap;
-use MaxStan\Mercure\Model\Jwt\PublisherTokenProvider;
+use MaxStan\Mercure\Model\Jwt\SubscriberTokenProvider;
 use MaxStan\Mercure\Service\MercureTopicResolver;
 use MaxStan\Mercure\Test\Integration\Fixtures\TestPrivateTopicProvider;
 use MaxStan\Mercure\Test\Integration\Fixtures\TestPublicTopicProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Integration tests for Mercure JWT token generation.
+ * Integration tests for Mercure subscriber JWT token generation.
  */
 #[DbIsolation(true)]
-class TokenProviderTest extends TestCase
+class SubscriberTokenProviderTest extends TestCase
 {
     /**
      * Verify JWT has three dot-separated segments.
      */
-    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/general/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
     #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testGetJwtReturnsValidJwtStructure(): void
     {
-        $tokenProvider = Bootstrap::getObjectManager()->create(PublisherTokenProvider::class);
+        $tokenProvider = Bootstrap::getObjectManager()->create(SubscriberTokenProvider::class);
         $jwt = $tokenProvider->getJwt();
 
         $parts = explode('.', $jwt);
@@ -35,29 +35,42 @@ class TokenProviderTest extends TestCase
     }
 
     /**
-     * Verify decoded JWT contains mercure.publish claim as array.
+     * Verify decoded JWT contains mercure.subscribe claim as array.
      */
-    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/general/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
     #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
-    public function testGetJwtContainsMercurePublishClaim(): void
+    public function testGetJwtContainsMercureSubscribeClaim(): void
     {
-        $tokenProvider = Bootstrap::getObjectManager()->create(PublisherTokenProvider::class);
+        $tokenProvider = Bootstrap::getObjectManager()->create(SubscriberTokenProvider::class);
         $payload = $this->decodeJwtPayload($tokenProvider->getJwt());
 
         $this->assertArrayHasKey('mercure', $payload);
-        $this->assertArrayHasKey('publish', $payload['mercure']);
-        $this->assertIsArray($payload['mercure']['publish']);
+        $this->assertArrayHasKey('subscribe', $payload['mercure']);
+        $this->assertIsArray($payload['mercure']['subscribe']);
+    }
+
+    /**
+     * Verify JWT publish claim is empty (subscriber token has no publish permissions).
+     */
+    #[Config('mercure/general/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    public function testGetJwtHasEmptyPublishClaim(): void
+    {
+        $tokenProvider = Bootstrap::getObjectManager()->create(SubscriberTokenProvider::class);
+        $payload = $this->decodeJwtPayload($tokenProvider->getJwt());
+
+        $this->assertEmpty($payload['mercure']['publish'] ?? []);
     }
 
     /**
      * Verify JWT contains future expiration when TTL is configured.
      */
-    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/general/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
     #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     #[Config('mercure/general/jwt_ttl', '3600', 'store', 'default')]
     public function testGetJwtContainsExpirationWhenTtlConfigured(): void
     {
-        $tokenProvider = Bootstrap::getObjectManager()->create(PublisherTokenProvider::class);
+        $tokenProvider = Bootstrap::getObjectManager()->create(SubscriberTokenProvider::class);
         $payload = $this->decodeJwtPayload($tokenProvider->getJwt());
 
         $this->assertArrayHasKey('exp', $payload);
@@ -65,11 +78,11 @@ class TokenProviderTest extends TestCase
     }
 
     /**
-     * Verify JWT publish claim contains topics from fixture providers.
+     * Verify JWT subscribe claim contains topics from fixture providers.
      */
-    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/general/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
     #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
-    public function testGetJwtPublishClaimContainsResolvedTopics(): void
+    public function testGetJwtSubscribeClaimContainsResolvedTopics(): void
     {
         $objectManager = Bootstrap::getObjectManager();
 
@@ -84,13 +97,13 @@ class TokenProviderTest extends TestCase
         $mockUserContext->method('getUserId')->willReturn(42);
         $mockUserContext->method('getUserType')->willReturn(UserContextInterface::USER_TYPE_CUSTOMER);
 
-        $tokenProvider = $objectManager->create(PublisherTokenProvider::class, [
+        $tokenProvider = $objectManager->create(SubscriberTokenProvider::class, [
             'mercureTopicProviderPool' => $resolver,
             'userContext' => $mockUserContext,
         ]);
 
         $payload = $this->decodeJwtPayload($tokenProvider->getJwt());
-        $topics = $payload['mercure']['publish'];
+        $topics = $payload['mercure']['subscribe'];
 
         $this->assertContains('https://example.com/public/notifications', $topics);
         $this->assertContains('https://example.com/private/user/42/messages', $topics);

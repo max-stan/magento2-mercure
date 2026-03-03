@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MaxStan\Mercure\Test\Integration\Service;
 
-use Magento\Framework\App\Response\Http;
 use Magento\Framework\Stdlib\Cookie\SensitiveCookieMetadata;
 use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Framework\Webapi\Rest\Response;
 use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -27,7 +27,7 @@ class MercureHttpManagementTest extends TestCase
     public function testAttachLinkHeaderSetsCorrectHeader(): void
     {
         $objectManager = Bootstrap::getObjectManager();
-        $response = $objectManager->create(Http::class);
+        $response = $objectManager->create(Response::class);
 
         $httpManagement = $objectManager->create(MercureHttpManagement::class, [
             'response' => $response,
@@ -47,7 +47,7 @@ class MercureHttpManagementTest extends TestCase
      * Verify authorization cookie is set with correct name, JWT value, and path.
      */
     #[Config('mercure/general/hub_url', 'https://hub.test/.well-known/mercure', 'store', 'default')]
-    #[Config('mercure/general/jwt_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/general/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
     #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testAttachAuthorizationCookieCallsWithCorrectArguments(): void
     {
@@ -62,12 +62,12 @@ class MercureHttpManagementTest extends TestCase
                     return count(explode('.', $jwt)) === 3;
                 }),
                 $this->callback(function (SensitiveCookieMetadata $metadata): bool {
-                    return $metadata->getPath() === 'https://hub.test/.well-known/mercure'
+                    return $metadata->getPath() === '/'
                         && $metadata->getSameSite() === 'Strict';
                 })
             );
 
-        $response = $objectManager->create(Http::class);
+        $response = $objectManager->create(Response::class);
 
         $httpManagement = $objectManager->create(MercureHttpManagement::class, [
             'response' => $response,
@@ -81,12 +81,12 @@ class MercureHttpManagementTest extends TestCase
      * Verify attach() sets both Link header and authorization cookie.
      */
     #[Config('mercure/general/hub_url', 'https://hub.test/.well-known/mercure', 'store', 'default')]
-    #[Config('mercure/general/jwt_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/general/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
     #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testAttachCallsBothHeaderAndCookie(): void
     {
         $objectManager = Bootstrap::getObjectManager();
-        $response = $objectManager->create(Http::class);
+        $response = $objectManager->create(Response::class);
 
         $mockCookieManager = $this->createMock(CookieManagerInterface::class);
         $mockCookieManager->expects($this->once())

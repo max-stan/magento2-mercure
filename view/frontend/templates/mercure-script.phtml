@@ -1,0 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use MaxStan\Mercure\ViewModel\HubUrl;
+
+/** @var Template $block */
+/** @var ViewModelRegistry $viewModels */
+/** @var Escaper $escaper */
+/** @var HubUrl $hubUrl */
+$hubUrl = $viewModels->require(HubUrl::class);
+if (!$hubUrl->getEncodedUrl()) {
+    return;
+}
+?>
+<script>
+    const worker = new SharedWorker('<?= $block->getViewFileUrl('MaxStan_Mercure::js/worker.js') ?>?hub=<?= $escaper->escapeJs($hubUrl->getEncodedUrl()) ?>');
+    worker.port.addEventListener('message', (event) => {
+        const { data: message } = event;
+        if (!message?.event) {
+            return;
+        }
+
+        window.dispatchEvent(
+            new CustomEvent(`mercure:${message.event}`, { detail: message.data })
+        );
+    });
+    worker.port.start();
+    window.mercureWorkerPort = worker.port;
+</script>

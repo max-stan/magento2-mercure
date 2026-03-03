@@ -20,11 +20,17 @@
                     <label>Hub URL</label>
                     <comment>The Mercure Hub publish endpoint URL.</comment>
                 </field>
-                <field id="jwt_secret" translate="label comment" type="obscure" sortOrder="30"
+                <field id="jwt_publisher_secret" translate="label comment" type="obscure" sortOrder="30"
                        showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>JWT Secret</label>
+                    <label>JWT Publisher Secret</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                    <comment>Shared secret between Magento and the Mercure Hub (HMAC).</comment>
+                    <comment>Secret used to sign JWTs for publishing messages to the Mercure Hub.</comment>
+                </field>
+                <field id="jwt_subscriber_secret" translate="label comment" type="obscure" sortOrder="30"
+                       showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>JWT Subscriber Secret</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <comment>Secret used to sign JWTs for authorizing frontend subscribers to the Mercure Hub.</comment>
                 </field>
                 <field id="jwt_algorithm" translate="label" type="select" sortOrder="40"
                        showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MaxStan\Mercure\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Store\Model\ScopeInterface;
 
 /**
@@ -14,12 +15,14 @@ readonly class Config
 {
     private const string XML_PATH_ENABLED = 'mercure/general/enabled';
     private const string XML_PATH_HUB_URL = 'mercure/general/hub_url';
-    private const string XML_PATH_JWT_SECRET = 'mercure/general/jwt_secret';
+    private const string XML_PATH_JWT_PUBLISHER_SECRET = 'mercure/general/jwt_publisher_secret';
+    private const string XML_PATH_JWT_SUBSCRIBER_SECRET = 'mercure/general/jwt_subscriber_secret';
     private const string XML_PATH_JWT_ALGORITHM = 'mercure/general/jwt_algorithm';
     private const string XML_PATH_JWT_TTL = 'mercure/general/jwt_ttl';
 
     public function __construct(
-        private ScopeConfigInterface $scopeConfig
+        private ScopeConfigInterface $scopeConfig,
+        private EncryptorInterface $encryptor
     ) {
     }
 
@@ -41,13 +44,34 @@ readonly class Config
         );
     }
 
-    public function getJwtSecret(?int $storeId = null): string
+    public function getJwtPublisherSecret(?int $storeId = null): ?string
     {
-        return (string) $this->scopeConfig->getValue(
-            self::XML_PATH_JWT_SECRET,
+        $value = (string)$this->scopeConfig->getValue(
+            self::XML_PATH_JWT_PUBLISHER_SECRET,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
+
+        if (!$value) {
+            return null;
+        }
+
+        return $this->encryptor->decrypt($value);
+    }
+
+    public function getJwtSubscriberSecret(?int $storeId = null): ?string
+    {
+        $value = (string)$this->scopeConfig->getValue(
+            self::XML_PATH_JWT_SUBSCRIBER_SECRET,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+
+        if (!$value) {
+            return null;
+        }
+
+        return $this->encryptor->decrypt($value);
     }
 
     public function getJwtAlgorithm(?int $storeId = null): string

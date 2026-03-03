@@ -17,7 +17,7 @@ class MercureTopicResolver implements MercureTopicResolverInterface
     ) {
     }
 
-    public function getAllowedPrivateTopics(int $userId): array
+    public function getAllowedPrivateTopics(int $userId, int $userType): array
     {
         if (isset($this->privateTopics[$userId])) {
             return $this->privateTopics[$userId];
@@ -28,7 +28,7 @@ class MercureTopicResolver implements MercureTopicResolverInterface
 
         $this->privateTopics[$userId] = array_reduce(
             $providers,
-            fn ($acc, $provider) => [...$acc, ...$provider->getPrivateTopics($userId)],
+            fn ($acc, $provider) => [...$acc, ...$provider->getPrivateTopics($userId, $userType)],
             []
         );
 
@@ -53,13 +53,13 @@ class MercureTopicResolver implements MercureTopicResolverInterface
         return $this->publicTopics;
     }
 
-    public function getAllAllowedTopics(?int $userId): array
+    public function getAllAllowedTopics(?int $userId, ?int $userType): array
     {
         $publicTopics = $this->getAllowedPublicTopics();
         if (!$userId) {
             return $publicTopics;
         }
 
-        return [...$publicTopics, ...$this->getAllowedPrivateTopics($userId)];
+        return [...$publicTopics, ...$this->getAllowedPrivateTopics($userId, $userType)];
     }
 }

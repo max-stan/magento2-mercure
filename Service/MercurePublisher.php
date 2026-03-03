@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace MaxStan\Mercure\Service;
 
 use Magento\Authorization\Model\UserContextInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json;
 use MaxStan\Mercure\Api\MercurePublisherInterface;
 use MaxStan\Mercure\Api\MercureTopicResolverInterface;
 use MaxStan\Mercure\Model\Config;
-use MaxStan\Mercure\Model\Jwt\TokenProvider;
+use MaxStan\Mercure\Model\Jwt\PublisherTokenProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mercure\Exception\RuntimeException;
 use Symfony\Component\Mercure\HubFactory;
@@ -29,17 +30,27 @@ class MercurePublisher implements MercurePublisherInterface
         private readonly LoggerInterface $logger,
         private readonly Json $json,
         private readonly UpdateFactory $updateFactory,
-        private readonly TokenProvider $tokenProvider,
+        private readonly PublisherTokenProvider $tokenProvider,
         private readonly HubFactory $hubFactory,
         private readonly MercureTopicResolverInterface $mercureTopicResolver,
         private readonly UserContextInterface $userContext
     ) {
     }
 
-    public function publish(array|string $topic, array $data): string
-    {
+    /**
+     * @inheritDoc
+     */
+    public function publish(
+        array|string $topic,
+        array $data,
+        ?string $event = null
+    ): string {
         if (!$this->config->isEnabled()) {
             return '';
+        }
+
+        if ($event) {
+            $data = ['event' => $event, 'data' => $data];
         }
 
         /** @var Update $update */
@@ -57,7 +68,9 @@ class MercurePublisher implements MercurePublisherInterface
                 ['e' => $e->getMessage(), 'topic' => $topic, 'data' => $data]
             );
 
-            throw $e;
+            throw new LocalizedException(
+                __('Something went wrong during topic publish')
+            );
         }
 
         $this->logger->info(
@@ -85,6 +98,7 @@ class MercurePublisher implements MercurePublisherInterface
     private function isPrivate(array|string $topic): bool
     {
         $userId = $this->userContext->getUserId();
+        $userType = $this->userContext->getUserType();
         if (!$userId) {
             return false;
         }
@@ -93,8 +107,8 @@ class MercurePublisher implements MercurePublisherInterface
             $topic = [$topic];
         }
 
-        $privateTopics = $this->mercureTopicResolver->getAllowedPrivateTopics($userId);
+        $privateTopics = $this->mercureTopicResolver->getAllowedPrivateTopics($userId, $userType);
 
-        return (bool)array_intersect($topic, $privateTopics);
+        return true;
     }
 }

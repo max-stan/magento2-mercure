@@ -14,7 +14,7 @@ readonly class TestPrivateTopicProvider implements MercureTopicProviderInterface
     /**
      * @inheritDoc
      */
-    public function getPrivateTopics(int $userId): array
+    public function getPrivateTopics(int $userId, int $userType): array
     {
         return ["https://example.com/private/user/$userId/messages"];
     }

@@ -13,7 +13,7 @@ use Symfony\Component\Mercure\Jwt\TokenProviderInterface;
 /**
  * Generates signed JWTs for Mercure Hub authentication.
  */
-class TokenProvider implements TokenProviderInterface
+class SubscriberTokenProvider implements TokenProviderInterface
 {
     private ?LcobucciFactory $factory = null;
 
@@ -27,9 +27,10 @@ class TokenProvider implements TokenProviderInterface
     public function getJwt(): string
     {
         $userId = $this->userContext->getUserId();
+        $userType = $this->userContext->getUserType();
 
         return $this->getFactory()->create(
-            publish: $this->mercureTopicProviderPool->getAllAllowedTopics($userId)
+            subscribe: $this->mercureTopicProviderPool->getAllAllowedTopics($userId, $userType)
         );
     }
 
@@ -40,7 +41,7 @@ class TokenProvider implements TokenProviderInterface
         }
 
         $this->factory = new LcobucciFactory(
-            secret: $this->config->getJwtSecret(),
+            secret: $this->config->getJwtSubscriberSecret(),
             algorithm: $this->config->getJwtAlgorithm(),
             jwtLifetime: $this->config->getJwtTtl()
         );
