@@ -7,7 +7,10 @@ namespace MaxStan\Mercure\Api;
 /**
  * Provides Mercure topic URIs for a specific domain (e.g. LiveChat, notifications).
  *
- * Implementations are registered via di.xml and aggregated by MercureTopicResolverInterface.
+ * Implementations are registered via di.xml as constructor arguments to
+ * {@see MercurePublishTopicsProviderInterface} and {@see MercureSubscribeTopicsProviderInterface}.
+ *
+ * @api
  */
 interface MercureTopicProviderInterface
 {

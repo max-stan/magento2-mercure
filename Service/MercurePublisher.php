@@ -8,7 +8,8 @@ use Magento\Authorization\Model\UserContextInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json;
 use MaxStan\Mercure\Api\MercurePublisherInterface;
-use MaxStan\Mercure\Api\MercureTopicResolverInterface;
+use MaxStan\Mercure\Api\MercurePublishTopicsProviderInterface;
+use MaxStan\Mercure\Api\MercureSubscribeTopicsProviderInterface;
 use MaxStan\Mercure\Model\Config;
 use MaxStan\Mercure\Model\Jwt\PublisherTokenProvider;
 use Psr\Log\LoggerInterface;
@@ -32,7 +33,8 @@ class MercurePublisher implements MercurePublisherInterface
         private readonly UpdateFactory $updateFactory,
         private readonly PublisherTokenProvider $tokenProvider,
         private readonly HubFactory $hubFactory,
-        private readonly MercureTopicResolverInterface $mercureTopicResolver,
+        private readonly MercureSubscribeTopicsProviderInterface $mercureSubscribeTopicsProvider,
+        private readonly MercurePublishTopicsProviderInterface $mercurePublishTopicsProvider,
         private readonly UserContextInterface $userContext
     ) {
     }
@@ -81,6 +83,9 @@ class MercurePublisher implements MercurePublisherInterface
         return $result;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getMercureHub(): HubInterface
     {
         if ($this->mercureHub) {
@@ -107,8 +112,11 @@ class MercurePublisher implements MercurePublisherInterface
             $topic = [$topic];
         }
 
-        $privateTopics = $this->mercureTopicResolver->getAllowedPrivateTopics($userId, $userType);
+        $privateTopics = array_unique([
+            ...$this->mercurePublishTopicsProvider->getPrivateTopics($userId, $userType),
+            ...$this->mercureSubscribeTopicsProvider->getPrivateTopics($userId, $userType),
+        ]);
 
-        return true;
+        return (bool)array_intersect($topic, $privateTopics);
     }
 }

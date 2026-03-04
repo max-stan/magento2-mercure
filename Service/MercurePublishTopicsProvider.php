@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace MaxStan\Mercure\Service;
 
+use MaxStan\Mercure\Api\MercurePublishTopicsProviderInterface;
 use MaxStan\Mercure\Api\MercureTopicProviderInterface;
-use MaxStan\Mercure\Api\MercureTopicResolverInterface;
 
-class MercureTopicResolver implements MercureTopicResolverInterface
+class MercurePublishTopicsProvider implements MercurePublishTopicsProviderInterface
 {
     private array $publicTopics;
     private array $privateTopics;
@@ -17,7 +17,10 @@ class MercureTopicResolver implements MercureTopicResolverInterface
     ) {
     }
 
-    public function getAllowedPrivateTopics(int $userId, int $userType): array
+    /**
+     * @inheritDoc
+     */
+    public function getPrivateTopics(int $userId, int $userType): array
     {
         if (isset($this->privateTopics[$userId])) {
             return $this->privateTopics[$userId];
@@ -35,7 +38,7 @@ class MercureTopicResolver implements MercureTopicResolverInterface
         return $this->privateTopics[$userId];
     }
 
-    public function getAllowedPublicTopics(): array
+    public function getPublicTopics(): array
     {
         if (isset($this->publicTopics)) {
             return $this->publicTopics;
@@ -53,13 +56,13 @@ class MercureTopicResolver implements MercureTopicResolverInterface
         return $this->publicTopics;
     }
 
-    public function getAllAllowedTopics(?int $userId, ?int $userType): array
+    public function getAllTopics(?int $userId, ?int $userType): array
     {
-        $publicTopics = $this->getAllowedPublicTopics();
+        $publicTopics = $this->getPublicTopics();
         if (!$userId) {
             return $publicTopics;
         }
 
-        return [...$publicTopics, ...$this->getAllowedPrivateTopics($userId, $userType)];
+        return [...$publicTopics, ...$this->getPrivateTopics($userId, $userType)];
     }
 }

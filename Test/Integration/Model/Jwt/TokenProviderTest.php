@@ -9,7 +9,7 @@ use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\Helper\Bootstrap;
 use MaxStan\Mercure\Model\Jwt\PublisherTokenProvider;
-use MaxStan\Mercure\Service\MercureTopicResolver;
+use MaxStan\Mercure\Service\MercurePublishTopicsProvider;
 use MaxStan\Mercure\Test\Integration\Fixtures\TestPrivateTopicProvider;
 use MaxStan\Mercure\Test\Integration\Fixtures\TestPublicTopicProvider;
 use PHPUnit\Framework\TestCase;
@@ -73,7 +73,7 @@ class TokenProviderTest extends TestCase
     {
         $objectManager = Bootstrap::getObjectManager();
 
-        $resolver = $objectManager->create(MercureTopicResolver::class, [
+        $resolver = $objectManager->create(MercurePublishTopicsProvider::class, [
             'providers' => [
                 new TestPublicTopicProvider(),
                 new TestPrivateTopicProvider(),

@@ -5,25 +5,28 @@ declare(strict_types=1);
 namespace MaxStan\Mercure\Api;
 
 /**
- * Aggregates Mercure topics from all registered topic providers.
+ * Aggregates Mercure subscribe topics from all registered topic providers.
+ * Collected topics are used in subscriber JWT claims to authorize SSE subscriptions.
+ *
+ * @api
  */
-interface MercureTopicResolverInterface
+interface MercureSubscribeTopicsProviderInterface
 {
     /**
      * Get all private topics the given user is allowed to access.
      *
-     * @param int $userId
+     * @param int $userId The Magento user ID (customer or admin).
      * @param int $userType One of UserContextInterface::USER_TYPE_* constants.
-     * @return string[]
+     * @return string[] List of private topic IRIs.
      */
-    public function getAllowedPrivateTopics(int $userId, int $userType): array;
+    public function getPrivateTopics(int $userId, int $userType): array;
 
     /**
      * Get all publicly accessible topics.
      *
      * @return string[]
      */
-    public function getAllowedPublicTopics(): array;
+    public function getPublicTopics(): array;
 
     /**
      * Get combined public and private topics for the given user.
@@ -34,5 +37,5 @@ interface MercureTopicResolverInterface
      * @param int|null $userType One of UserContextInterface::USER_TYPE_* constants.
      * @return string[]
      */
-    public function getAllAllowedTopics(?int $userId, ?int $userType): array;
+    public function getAllTopics(?int $userId, ?int $userType): array;
 }

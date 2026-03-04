@@ -9,6 +9,8 @@ use Symfony\Component\Mercure\HubInterface;
 
 /**
  * Publish an update to the Mercure Hub.
+ *
+ * @api
  */
 interface MercurePublisherInterface
 {
@@ -18,7 +20,7 @@ interface MercurePublisherInterface
      * @param array|string $topic Topic URI(s) to publish to.
      * @param array $data Payload data (will be JSON-encoded).
      * @param string|null $event Optional event name to wrap the data with.
-     * @return string The Mercure hub response ID.
+     * @return string The Mercure hub response ID, or empty string when the module is disabled.
      * @throws LocalizedException
      */
     public function publish(array|string $topic, array $data, ?string $event = null): string;

@@ -6,7 +6,7 @@ namespace MaxStan\Mercure\Model\Jwt;
 
 use Magento\Authorization\Model\UserContextInterface;
 use MaxStan\Mercure\Model\Config;
-use MaxStan\Mercure\Service\MercureTopicResolver;
+use MaxStan\Mercure\Service\MercurePublishTopicsProvider;
 use Symfony\Component\Mercure\Jwt\LcobucciFactory;
 use Symfony\Component\Mercure\Jwt\TokenProviderInterface;
 
@@ -19,7 +19,7 @@ class PublisherTokenProvider implements TokenProviderInterface
 
     public function __construct(
         private readonly Config $config,
-        private readonly MercureTopicResolver $mercureTopicProviderPool,
+        private readonly MercurePublishTopicsProvider $mercureTopicProviderPool,
         private readonly UserContextInterface $userContext
     ) {
     }
@@ -30,7 +30,7 @@ class PublisherTokenProvider implements TokenProviderInterface
         $userType = $this->userContext->getUserType();
 
         return $this->getFactory()->create(
-            publish: $this->mercureTopicProviderPool->getAllAllowedTopics($userId, $userType)
+            publish: $this->mercureTopicProviderPool->getAllTopics($userId, $userType)
         );
     }
 
