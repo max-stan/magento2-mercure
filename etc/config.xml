@@ -5,7 +5,7 @@
         <mercure>
             <general>
                 <enabled>0</enabled>
-                <hub_url>http://localhost:3000/.well-known/mercure</hub_url>
+                <hub_url>http://localhost:8080/.well-known/mercure</hub_url>
             </general>
             <jwt_publisher>
                 <jwt_algorithm>hmac.sha256</jwt_algorithm>
