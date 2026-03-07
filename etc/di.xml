@@ -3,8 +3,8 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="MaxStan\Mercure\Api\MercurePublisherInterface"
                 type="MaxStan\Mercure\Service\MercurePublisher" />
-    <preference for="MaxStan\Mercure\Api\MercureHttpManagementInterface"
-                type="MaxStan\Mercure\Service\MercureHttpManagement" />
+    <preference for="MaxStan\Mercure\Api\MercureRefreshTokenInterface"
+                type="MaxStan\Mercure\Service\MercureRefreshToken" />
     <preference for="MaxStan\Mercure\Api\MercurePublishTopicsProviderInterface"
                 type="MaxStan\Mercure\Service\MercurePublishTopicsProvider" />
     <preference for="MaxStan\Mercure\Api\MercureSubscribeTopicsProviderInterface"

@@ -15,10 +15,12 @@ readonly class Config
 {
     private const string XML_PATH_ENABLED = 'mercure/general/enabled';
     private const string XML_PATH_HUB_URL = 'mercure/general/hub_url';
-    private const string XML_PATH_JWT_PUBLISHER_SECRET = 'mercure/general/jwt_publisher_secret';
-    private const string XML_PATH_JWT_SUBSCRIBER_SECRET = 'mercure/general/jwt_subscriber_secret';
-    private const string XML_PATH_JWT_ALGORITHM = 'mercure/general/jwt_algorithm';
-    private const string XML_PATH_JWT_TTL = 'mercure/general/jwt_ttl';
+    private const string XML_PATH_JWT_PUBLISHER_SECRET = 'mercure/jwt_publisher/jwt_publisher_secret';
+    private const string XML_PATH_JWT_SUBSCRIBER_SECRET = 'mercure/jwt_subscriber/jwt_subscriber_secret';
+    private const string XML_PATH_JWT_PUBLISHER_ALGORITHM = 'mercure/jwt_publisher/jwt_algorithm';
+    private const string XML_PATH_JWT_SUBSCRIBER_ALGORITHM = 'mercure/jwt_subscriber/jwt_algorithm';
+    private const string XML_PATH_JWT_PUBLISHER_TTL = 'mercure/jwt_publisher/jwt_ttl';
+    private const string XML_PATH_JWT_SUBSCRIBER_TTL = 'mercure/jwt_subscriber/jwt_ttl';
 
     public function __construct(
         private ScopeConfigInterface $scopeConfig,
@@ -74,10 +76,19 @@ readonly class Config
         return $this->encryptor->decrypt($value);
     }
 
-    public function getJwtAlgorithm(?int $storeId = null): string
+    public function getJwtPublisherAlgorithm(?int $storeId = null): string
     {
         return (string)$this->scopeConfig->getValue(
-            self::XML_PATH_JWT_ALGORITHM,
+            self::XML_PATH_JWT_PUBLISHER_ALGORITHM,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    public function getJwtSubscriberAlgorithm(?int $storeId = null): string
+    {
+        return (string)$this->scopeConfig->getValue(
+            self::XML_PATH_JWT_SUBSCRIBER_ALGORITHM,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
@@ -86,10 +97,19 @@ readonly class Config
     /**
      * Get JWT token lifetime in seconds.
      */
-    public function getJwtTtl(?int $storeId = null): int
+    public function getJwtPublisherTtl(?int $storeId = null): int
     {
         return (int)$this->scopeConfig->getValue(
-            self::XML_PATH_JWT_TTL,
+            self::XML_PATH_JWT_PUBLISHER_TTL,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    public function getJwtSubscriberTtl(?int $storeId = null): int
+    {
+        return (int)$this->scopeConfig->getValue(
+            self::XML_PATH_JWT_SUBSCRIBER_TTL,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );

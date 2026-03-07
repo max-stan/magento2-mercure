@@ -8,37 +8,56 @@
             <tab>service</tab>
             <resource>MaxStan_Mercure::config</resource>
             <group id="general" translate="label" type="text" sortOrder="10"
-                   showInDefault="1" showInWebsite="1" showInStore="0">
+                   showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>General Settings</label>
                 <field id="enabled" translate="label" type="select" sortOrder="10"
-                       showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                       showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Enable</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="hub_url" translate="label comment" type="text" sortOrder="20"
-                       showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                       showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Hub URL</label>
                     <comment>The Mercure Hub publish endpoint URL.</comment>
                 </field>
+            </group>
+            <group id="jwt_publisher" translate="label" type="text" sortOrder="10"
+                   showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>JWT Publisher</label>
                 <field id="jwt_publisher_secret" translate="label comment" type="obscure" sortOrder="30"
-                       showInDefault="1" showInWebsite="1" showInStore="0">
+                       showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>JWT Publisher Secret</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                    <comment>Secret used to sign JWTs for publishing messages to the Mercure Hub.</comment>
+                    <comment>Secret used to sign JWTs for authorizing to the Mercure Hub.</comment>
                 </field>
+                <field id="jwt_algorithm" translate="label" type="select" sortOrder="40"
+                       showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>JWT Algorithm</label>
+                    <source_model>MaxStan\Mercure\Model\Config\Source\Algorithm</source_model>
+                </field>
+                <field id="jwt_ttl" translate="label comment" type="text" sortOrder="60"
+                       showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>JWT TTL (seconds)</label>
+                    <comment>Token lifetime in seconds.</comment>
+                    <validate>validate-digits</validate>
+                </field>
+            </group>
+            <group id="jwt_subscriber" translate="label" type="text" sortOrder="10"
+                   showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>JWT Subscriber</label>
                 <field id="jwt_subscriber_secret" translate="label comment" type="obscure" sortOrder="30"
-                       showInDefault="1" showInWebsite="1" showInStore="0">
+                       showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>JWT Subscriber Secret</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <comment>Secret used to sign JWTs for authorizing frontend subscribers to the Mercure Hub.</comment>
                 </field>
                 <field id="jwt_algorithm" translate="label" type="select" sortOrder="40"
-                       showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                       showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>JWT Algorithm</label>
                     <source_model>MaxStan\Mercure\Model\Config\Source\Algorithm</source_model>
                 </field>
                 <field id="jwt_ttl" translate="label comment" type="text" sortOrder="60"
-                       showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                       showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>JWT TTL (seconds)</label>
                     <comment>Token lifetime in seconds.</comment>
                     <validate>validate-digits</validate>

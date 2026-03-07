@@ -42,8 +42,8 @@ class PublisherTokenProvider implements TokenProviderInterface
 
         $this->factory = new LcobucciFactory(
             secret: $this->config->getJwtPublisherSecret(),
-            algorithm: $this->config->getJwtAlgorithm(),
-            jwtLifetime: $this->config->getJwtTtl()
+            algorithm: $this->config->getJwtPublisherAlgorithm(),
+            jwtLifetime: $this->config->getJwtPublisherTtl()
         );
 
         return $this->factory;

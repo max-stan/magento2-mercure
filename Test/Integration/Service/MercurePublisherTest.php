@@ -26,8 +26,8 @@ class MercurePublisherTest extends TestCase
      * Verify publish returns empty string and hub is never called when disabled.
      */
     #[Config('mercure/general/hub_url', 'https://hub.test/.well-known/mercure', 'store', 'default')]
-    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testPublishReturnsEmptyStringWhenDisabled(): void
     {
         $mockHub = $this->createMock(HubInterface::class);
@@ -43,8 +43,8 @@ class MercurePublisherTest extends TestCase
      */
     #[Config('mercure/general/enabled', '1', 'store', 'default')]
     #[Config('mercure/general/hub_url', 'https://hub.test/.well-known/mercure', 'store', 'default')]
-    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testPublishCallsHubWithCorrectUpdate(): void
     {
         $mockHub = $this->createMock(HubInterface::class);
@@ -65,8 +65,8 @@ class MercurePublisherTest extends TestCase
      */
     #[Config('mercure/general/enabled', '1', 'store', 'default')]
     #[Config('mercure/general/hub_url', 'https://hub.test/.well-known/mercure', 'store', 'default')]
-    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testPublishReturnsHubResponseId(): void
     {
         $mockHub = $this->createMock(HubInterface::class);
@@ -83,8 +83,8 @@ class MercurePublisherTest extends TestCase
      */
     #[Config('mercure/general/enabled', '1', 'store', 'default')]
     #[Config('mercure/general/hub_url', 'https://hub.test/.well-known/mercure', 'store', 'default')]
-    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testPublishLogsSuccessAfterPublish(): void
     {
         $mockHub = $this->createMock(HubInterface::class);
@@ -110,8 +110,8 @@ class MercurePublisherTest extends TestCase
      */
     #[Config('mercure/general/enabled', '1', 'store', 'default')]
     #[Config('mercure/general/hub_url', 'https://hub.test/.well-known/mercure', 'store', 'default')]
-    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testPublishLogsAndRethrowsOnHubError(): void
     {
         $mockHub = $this->createMock(HubInterface::class);

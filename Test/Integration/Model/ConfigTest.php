@@ -50,20 +50,38 @@ class ConfigTest extends TestCase
     }
 
     /**
-     * Verify JWT algorithm is read from store-scoped config.
+     * Verify publisher JWT algorithm is read from store-scoped config.
      */
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha512', 'store', 'default')]
-    public function testGetJwtAlgorithmReturnsConfiguredValue(): void
+    #[Config('mercure/jwt_publisher/jwt_algorithm', 'hmac.sha512', 'store', 'default')]
+    public function testGetJwtPublisherAlgorithmReturnsConfiguredValue(): void
     {
-        $this->assertSame('hmac.sha512', $this->config->getJwtAlgorithm());
+        $this->assertSame('hmac.sha512', $this->config->getJwtPublisherAlgorithm());
     }
 
     /**
-     * Verify JWT TTL is read as integer from store-scoped config.
+     * Verify subscriber JWT algorithm is read from store-scoped config.
      */
-    #[Config('mercure/general/jwt_ttl', '7200', 'store', 'default')]
-    public function testGetJwtTtlReturnsInteger(): void
+    #[Config('mercure/jwt_subscriber/jwt_algorithm', 'hmac.sha384', 'store', 'default')]
+    public function testGetJwtSubscriberAlgorithmReturnsConfiguredValue(): void
     {
-        $this->assertSame(7200, $this->config->getJwtTtl());
+        $this->assertSame('hmac.sha384', $this->config->getJwtSubscriberAlgorithm());
+    }
+
+    /**
+     * Verify publisher JWT TTL is read as integer from store-scoped config.
+     */
+    #[Config('mercure/jwt_publisher/jwt_ttl', '7200', 'store', 'default')]
+    public function testGetJwtPublisherTtlReturnsInteger(): void
+    {
+        $this->assertSame(7200, $this->config->getJwtPublisherTtl());
+    }
+
+    /**
+     * Verify subscriber JWT TTL is read as integer from store-scoped config.
+     */
+    #[Config('mercure/jwt_subscriber/jwt_ttl', '3600', 'store', 'default')]
+    public function testGetJwtSubscriberTtlReturnsInteger(): void
+    {
+        $this->assertSame(3600, $this->config->getJwtSubscriberTtl());
     }
 }

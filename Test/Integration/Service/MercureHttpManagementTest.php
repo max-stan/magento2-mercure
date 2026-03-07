@@ -4,102 +4,52 @@ declare(strict_types=1);
 
 namespace MaxStan\Mercure\Test\Integration\Service;
 
-use Magento\Framework\Stdlib\Cookie\SensitiveCookieMetadata;
-use Magento\Framework\Stdlib\CookieManagerInterface;
-use Magento\Framework\Webapi\Rest\Response;
 use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\Helper\Bootstrap;
-use MaxStan\Mercure\Api\MercureHttpManagementInterface;
-use MaxStan\Mercure\Service\MercureHttpManagement;
+use MaxStan\Mercure\Service\MercureRefreshToken;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Integration tests for Mercure HTTP header and cookie management.
+ * Integration tests for Mercure token refresh service.
  */
 #[DbIsolation(true)]
 class MercureHttpManagementTest extends TestCase
 {
     /**
-     * Verify Link header is set with correct hub URL.
+     * Verify refresh returns a valid three-part JWT string.
      */
     #[Config('mercure/general/hub_url', 'https://hub.test/.well-known/mercure', 'store', 'default')]
-    public function testAttachLinkHeaderSetsCorrectHeader(): void
+    #[Config('mercure/jwt_subscriber/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_subscriber/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    public function testRefreshReturnsValidJwt(): void
     {
         $objectManager = Bootstrap::getObjectManager();
-        $response = $objectManager->create(Response::class);
+        $refreshToken = $objectManager->create(MercureRefreshToken::class);
 
-        $httpManagement = $objectManager->create(MercureHttpManagement::class, [
-            'response' => $response,
-        ]);
+        $jwt = $refreshToken->refresh();
 
-        $httpManagement->attachLinkHeader();
-
-        $header = $response->getHeader('Link');
-        $this->assertNotFalse($header);
-        $this->assertSame(
-            '<https://hub.test/.well-known/mercure>; rel="mercure"',
-            $header->getFieldValue()
-        );
+        $this->assertNotEmpty($jwt);
+        $this->assertCount(3, explode('.', $jwt), 'JWT must have three parts (header.payload.signature)');
     }
 
     /**
-     * Verify authorization cookie is set with correct name, JWT value, and path.
+     * Verify refresh returns JWT with exp claim when TTL is configured.
      */
     #[Config('mercure/general/hub_url', 'https://hub.test/.well-known/mercure', 'store', 'default')]
-    #[Config('mercure/general/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
-    public function testAttachAuthorizationCookieCallsWithCorrectArguments(): void
+    #[Config('mercure/jwt_subscriber/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_subscriber/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    #[Config('mercure/jwt_subscriber/jwt_ttl', '120', 'store', 'default')]
+    public function testRefreshReturnsJwtWithExpClaim(): void
     {
         $objectManager = Bootstrap::getObjectManager();
+        $refreshToken = $objectManager->create(MercureRefreshToken::class);
 
-        $mockCookieManager = $this->createMock(CookieManagerInterface::class);
-        $mockCookieManager->expects($this->once())
-            ->method('setSensitiveCookie')
-            ->with(
-                MercureHttpManagementInterface::AUTHORIZATION_COOKIE_NAME,
-                $this->callback(function (string $jwt): bool {
-                    return count(explode('.', $jwt)) === 3;
-                }),
-                $this->callback(function (SensitiveCookieMetadata $metadata): bool {
-                    return $metadata->getPath() === '/'
-                        && $metadata->getSameSite() === 'Strict';
-                })
-            );
+        $jwt = $refreshToken->refresh();
+        $parts = explode('.', $jwt);
+        $payload = json_decode(base64_decode($parts[1]), true);
 
-        $response = $objectManager->create(Response::class);
-
-        $httpManagement = $objectManager->create(MercureHttpManagement::class, [
-            'response' => $response,
-            'cookieManager' => $mockCookieManager,
-        ]);
-
-        $httpManagement->attachAuthorizationCookie();
-    }
-
-    /**
-     * Verify attach() sets both Link header and authorization cookie.
-     */
-    #[Config('mercure/general/hub_url', 'https://hub.test/.well-known/mercure', 'store', 'default')]
-    #[Config('mercure/general/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
-    public function testAttachCallsBothHeaderAndCookie(): void
-    {
-        $objectManager = Bootstrap::getObjectManager();
-        $response = $objectManager->create(Response::class);
-
-        $mockCookieManager = $this->createMock(CookieManagerInterface::class);
-        $mockCookieManager->expects($this->once())
-            ->method('setSensitiveCookie');
-
-        $httpManagement = $objectManager->create(MercureHttpManagement::class, [
-            'response' => $response,
-            'cookieManager' => $mockCookieManager,
-        ]);
-
-        $httpManagement->attach();
-
-        $header = $response->getHeader('Link');
-        $this->assertNotFalse($header, 'Link header should be set by attach()');
+        $this->assertArrayHasKey('exp', $payload, 'JWT must contain exp claim when TTL is set');
+        $this->assertGreaterThan(time(), $payload['exp'], 'JWT exp must be in the future');
     }
 }

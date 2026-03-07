@@ -42,8 +42,8 @@ class SubscriberTokenProvider implements TokenProviderInterface
 
         $this->factory = new LcobucciFactory(
             secret: $this->config->getJwtSubscriberSecret(),
-            algorithm: $this->config->getJwtAlgorithm(),
-            jwtLifetime: $this->config->getJwtTtl()
+            algorithm: $this->config->getJwtSubscriberAlgorithm(),
+            jwtLifetime: $this->config->getJwtSubscriberTtl()
         );
 
         return $this->factory;

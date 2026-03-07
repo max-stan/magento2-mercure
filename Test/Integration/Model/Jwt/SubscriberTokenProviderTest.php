@@ -23,8 +23,8 @@ class SubscriberTokenProviderTest extends TestCase
     /**
      * Verify JWT has three dot-separated segments.
      */
-    #[Config('mercure/general/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    #[Config('mercure/jwt_subscriber/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_subscriber/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testGetJwtReturnsValidJwtStructure(): void
     {
         $tokenProvider = Bootstrap::getObjectManager()->create(SubscriberTokenProvider::class);
@@ -37,8 +37,8 @@ class SubscriberTokenProviderTest extends TestCase
     /**
      * Verify decoded JWT contains mercure.subscribe claim as array.
      */
-    #[Config('mercure/general/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    #[Config('mercure/jwt_subscriber/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_subscriber/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testGetJwtContainsMercureSubscribeClaim(): void
     {
         $tokenProvider = Bootstrap::getObjectManager()->create(SubscriberTokenProvider::class);
@@ -52,8 +52,8 @@ class SubscriberTokenProviderTest extends TestCase
     /**
      * Verify JWT publish claim is empty (subscriber token has no publish permissions).
      */
-    #[Config('mercure/general/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    #[Config('mercure/jwt_subscriber/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_subscriber/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testGetJwtHasEmptyPublishClaim(): void
     {
         $tokenProvider = Bootstrap::getObjectManager()->create(SubscriberTokenProvider::class);
@@ -65,9 +65,9 @@ class SubscriberTokenProviderTest extends TestCase
     /**
      * Verify JWT contains future expiration when TTL is configured.
      */
-    #[Config('mercure/general/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
-    #[Config('mercure/general/jwt_ttl', '3600', 'store', 'default')]
+    #[Config('mercure/jwt_subscriber/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_subscriber/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    #[Config('mercure/jwt_subscriber/jwt_ttl', '3600', 'store', 'default')]
     public function testGetJwtContainsExpirationWhenTtlConfigured(): void
     {
         $tokenProvider = Bootstrap::getObjectManager()->create(SubscriberTokenProvider::class);
@@ -80,8 +80,8 @@ class SubscriberTokenProviderTest extends TestCase
     /**
      * Verify JWT subscribe claim contains topics from fixture providers.
      */
-    #[Config('mercure/general/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    #[Config('mercure/jwt_subscriber/jwt_subscriber_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_subscriber/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testGetJwtSubscribeClaimContainsResolvedTopics(): void
     {
         $objectManager = Bootstrap::getObjectManager();

@@ -15,7 +15,7 @@ use MaxStan\Mercure\Test\Integration\Fixtures\TestPublicTopicProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Integration tests for Mercure JWT token generation.
+ * Integration tests for Mercure publisher JWT token generation.
  */
 #[DbIsolation(true)]
 class TokenProviderTest extends TestCase
@@ -23,8 +23,8 @@ class TokenProviderTest extends TestCase
     /**
      * Verify JWT has three dot-separated segments.
      */
-    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testGetJwtReturnsValidJwtStructure(): void
     {
         $tokenProvider = Bootstrap::getObjectManager()->create(PublisherTokenProvider::class);
@@ -37,8 +37,8 @@ class TokenProviderTest extends TestCase
     /**
      * Verify decoded JWT contains mercure.publish claim as array.
      */
-    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testGetJwtContainsMercurePublishClaim(): void
     {
         $tokenProvider = Bootstrap::getObjectManager()->create(PublisherTokenProvider::class);
@@ -52,9 +52,9 @@ class TokenProviderTest extends TestCase
     /**
      * Verify JWT contains future expiration when TTL is configured.
      */
-    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
-    #[Config('mercure/general/jwt_ttl', '3600', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_ttl', '3600', 'store', 'default')]
     public function testGetJwtContainsExpirationWhenTtlConfigured(): void
     {
         $tokenProvider = Bootstrap::getObjectManager()->create(PublisherTokenProvider::class);
@@ -67,8 +67,8 @@ class TokenProviderTest extends TestCase
     /**
      * Verify JWT publish claim contains topics from fixture providers.
      */
-    #[Config('mercure/general/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
-    #[Config('mercure/general/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_publisher_secret', 'integration-test-secret-that-is-long-enough', 'store', 'default')]
+    #[Config('mercure/jwt_publisher/jwt_algorithm', 'hmac.sha256', 'store', 'default')]
     public function testGetJwtPublishClaimContainsResolvedTopics(): void
     {
         $objectManager = Bootstrap::getObjectManager();

@@ -1,0 +1,62 @@
+<?php
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use MaxStan\Mercure\ViewModel\Mercure;
+
+/** @var Template $block */
+/** @var ViewModelRegistry $viewModels */
+/** @var Escaper $escaper */
+/** @var Mercure $hubUrl */
+$mercure = $viewModels->require(Mercure::class);
+?>
+<script>
+    (() => {
+        const worker = new SharedWorker(
+            '<?= $block->getViewFileUrl('MaxStan_Mercure::js/worker.js') ?>?<?= $escaper->escapeJs($mercure->getEncodedParams()) ?>',
+            'mercure-worker'
+        );
+
+        const refreshToken = async () => {
+            const result = await fetch('<?= $escaper->escapeJs($mercure->getTokenRefreshEndpoint()) ?>', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                ...(window.FORM_KEY ? { body: JSON.stringify({ form_key: window.FORM_KEY }) } : {})
+            });
+
+            if (!result.ok) {
+                console.error('Something went wrong during token refresh')
+            }
+
+            const token = await result.json();
+            worker.port.postMessage({
+                type: 'authorization',
+                token
+            });
+
+            <?php // Does nothing if port has been already opened?>
+            worker.port.start();
+        }
+
+        worker.port.addEventListener('message', (event) => {
+            const { data: message } = event;
+            if (!message?.event) {
+                return;
+            }
+
+            window.dispatchEvent(
+                new CustomEvent(`mercure:${message.event}`, { detail: message.data })
+            );
+        });
+
+        window.mercureWorkerPort = worker.port;
+        refreshToken();
+    })();
+</script>

@@ -6,10 +6,15 @@
             <general>
                 <enabled>0</enabled>
                 <hub_url>http://localhost:3000/.well-known/mercure</hub_url>
-                <jwt_algorithm>hmac.sha256</jwt_algorithm>
-                <publish_topics>*</publish_topics>
-                <jwt_ttl>3600</jwt_ttl>
             </general>
+            <jwt_publisher>
+                <jwt_algorithm>hmac.sha256</jwt_algorithm>
+                <jwt_ttl>3600</jwt_ttl>
+            </jwt_publisher>
+            <jwt_subscriber>
+                <jwt_algorithm>hmac.sha256</jwt_algorithm>
+                <jwt_ttl>3600</jwt_ttl>
+            </jwt_subscriber>
         </mercure>
     </default>
 </config>
