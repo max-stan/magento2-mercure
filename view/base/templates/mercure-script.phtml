@@ -20,30 +20,32 @@ $mercure = $viewModels->require(Mercure::class);
             'mercure-worker'
         );
 
-        const refreshToken = async () => {
-            const result = await fetch('<?= $escaper->escapeJs($mercure->getTokenRefreshEndpoint()) ?>', {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                ...(window.FORM_KEY ? { body: JSON.stringify({ form_key: window.FORM_KEY }) } : {})
-            });
+        <?php if ($mercure->isLoggedIn()): ?>
+            const refreshToken = async () => {
+                const result = await fetch('<?= $escaper->escapeJs($mercure->getTokenRefreshEndpoint()) ?>', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    ...(window.FORM_KEY ? { body: JSON.stringify({ form_key: window.FORM_KEY }) } : {})
+                });
 
-            if (!result.ok) {
-                console.error('Something went wrong during token refresh')
+                if (!result.ok) {
+                    console.error('Something went wrong during token refresh')
+                }
+
+                const token = await result.json();
+                worker.port.postMessage({
+                    type: 'authorization',
+                    token
+                });
+
+                <?php // Does nothing if port has been already opened?>
+                worker.port.start();
             }
-
-            const token = await result.json();
-            worker.port.postMessage({
-                type: 'authorization',
-                token
-            });
-
-            <?php // Does nothing if port has been already opened?>
-            worker.port.start();
-        }
+        <?php endif; ?>
 
         worker.port.addEventListener('message', (event) => {
             const { data: message } = event;
@@ -57,6 +59,10 @@ $mercure = $viewModels->require(Mercure::class);
         });
 
         window.mercureWorkerPort = worker.port;
-        refreshToken();
+        <?php if ($mercure->isLoggedIn()): ?>
+            refreshToken();
+        <?php else: ?>
+            window.mercureWorkerPort.start();
+        <?php endif; ?>
     })();
 </script>
