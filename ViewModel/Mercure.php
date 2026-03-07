@@ -10,6 +10,8 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use MaxStan\Mercure\Model\Config;
+use Magento\Customer\Model\Context as CustomerContext;
+use Magento\Framework\App\Http\Context as HttpContext;
 
 readonly class Mercure implements ArgumentInterface
 {
@@ -19,7 +21,8 @@ readonly class Mercure implements ArgumentInterface
     public function __construct(
         private Config $config,
         private State $appState,
-        private UrlInterface $urlBuilder
+        private UrlInterface $urlBuilder,
+        private HttpContext $httpContext
     ) {
     }
 
@@ -28,6 +31,11 @@ readonly class Mercure implements ArgumentInterface
         return http_build_query([
             'hub' => base64_encode($this->config->getHubUrl())
         ]);
+    }
+
+    public function isLoggedIn(): bool
+    {
+        return (bool)$this->httpContext->getValue(CustomerContext::CONTEXT_AUTH);
     }
 
     public function getTokenRefreshEndpoint(): string
