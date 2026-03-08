@@ -29,7 +29,7 @@ To install Mercure in your Magento 2 project, follow these steps:
 # Set minimum stability to allow alpha version
 composer config minimum-stability "alpha"
 # Standard Magento module installation commands
-composer require max-stan/magento2-mercure:0.1.0-alpha1
+composer require max-stan/magento2-mercure
 bin/magento mod:en MaxStan_Mercure
 bin/magento setup:upgrade
 bin/magento setup:di:compile
