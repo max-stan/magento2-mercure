@@ -1,4 +1,4 @@
-# Magento 2 Mercure
+# 📦 Magento 2 Mercure
 
 > Magento 2 module that integrates [Symfony Mercure](https://github.com/symfony/mercure)
 to enable real-time, server-sent event (SSE) publishing capabilities for your e-commerce store.
@@ -13,18 +13,31 @@ your storefront and admin panel. It handles JWT-based authentication for both pu
 secrets for each operation. Topics are managed through an extensible resolver system that supports both public
 (guest-accessible) and private (customer-specific) topic authorization.
 
-## Installation
+## 🛠️ Installation
 To install Mercure in your Magento 2 project, follow these steps:
 
 ```shell
-composer require max-stan/magento2-mercure
+# Standard Magento module installation commands
+composer require max-stan/magento2-mercure:dev-master
 bin/magento mod:en MaxStan_Mercure
 bin/magento setup:upgrade
 bin/magento setup:di:compile
+# Sets config values
+bin/magento config:set mercure/jwt_publisher/jwt_publisher_secret '!ChangeThisMercureHubJWTSecretKey!'
+bin/magento config:set mercure/jwt_subscriber/jwt_subscriber_secret '!ChangeThisMercureHubJWTSecretKey!'
+bin/magento config:set mercure/general/enabled 1
+bin/magento c:f
+# Install and configure Mercure Hub in dev mode, available via http://localhost:8080
+docker run \
+    -e SERVER_NAME=':80' \
+    -e MERCURE_PUBLISHER_JWT_KEY='!ChangeThisMercureHubJWTSecretKey!' \
+    -e MERCURE_SUBSCRIBER_JWT_KEY='!ChangeThisMercureHubJWTSecretKey!' \
+    -p 8080:80 \
+    dunglas/mercure caddy run --config /etc/caddy/dev.Caddyfile
 ```
 
-## Magento Compatibility
+## 🔁 Magento Compatibility
 Can be installed on most 2.x Magento versions
 
-## Contributing
+## 🚀 Contributing
 Contributions are welcome! If you find a bug or have a feature request, feel free to open an issue or submit a pull request.
