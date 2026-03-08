@@ -26,8 +26,9 @@ Public and private topic separation with user-scoped access control
 To install Mercure in your Magento 2 project, follow these steps:
 
 ```shell
-# Standard Magento module installation commands
+# Set minimum stability to allow alpha version
 composer config minimum-stability "alpha"
+# Standard Magento module installation commands
 composer require max-stan/magento2-mercure:0.1.0-alpha1
 bin/magento mod:en MaxStan_Mercure
 bin/magento setup:upgrade
