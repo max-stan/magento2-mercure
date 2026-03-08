@@ -13,6 +13,12 @@ your storefront and admin panel. It handles JWT-based authentication for both pu
 secrets for each operation. Topics are managed through an extensible resolver system that supports both public
 (guest-accessible) and private (customer-specific) topic authorization.
 
+## ⭐ Features
+- **SharedWorker SSE** — Single connection shared across browser tabs with automatic reconnection
+- **JWT Authentication** — Separate publisher/subscriber token generation with configurable secrets, algorithms (HMAC SHA-256/384/512), and TTL
+- **Topic-based authorization** — Third-party modules have an ability to register their own topics. 
+Public and private topic separation with user-scoped access control
+
 ## 🛠️ Installation
 To install Mercure in your Magento 2 project, follow these steps:
 
