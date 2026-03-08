@@ -12,6 +12,7 @@ use MaxStan\Mercure\ViewModel\Mercure;
 /** @var Escaper $escaper */
 /** @var Mercure $hubUrl */
 $mercure = $viewModels->require(Mercure::class);
+$isAdmin = (bool)$block->getData('admin');
 ?>
 <script>
     (() => {
@@ -20,7 +21,7 @@ $mercure = $viewModels->require(Mercure::class);
             'mercure-worker'
         );
 
-        <?php if ($mercure->isLoggedIn()): ?>
+        <?php if ($isAdmin || $mercure->isLoggedIn()): ?>
             const refreshToken = async () => {
                 const result = await fetch('<?= $escaper->escapeJs($mercure->getTokenRefreshEndpoint()) ?>', {
                     method: 'POST',
@@ -59,7 +60,7 @@ $mercure = $viewModels->require(Mercure::class);
         });
 
         window.mercureWorkerPort = worker.port;
-        <?php if ($mercure->isLoggedIn()): ?>
+        <?php if ($isAdmin || $mercure->isLoggedIn()): ?>
             refreshToken();
         <?php else: ?>
             window.mercureWorkerPort.start();
