@@ -13,6 +13,9 @@ your storefront and admin panel. It handles JWT-based authentication for both pu
 secrets for each operation. Topics are managed through an extensible resolver system that supports both public
 (guest-accessible) and private (customer-specific) topic authorization.
 
+> [!WARNING]
+> This package is currently in **alpha** (`0.1.0-alpha1`). The API is unstable and may introduce breaking changes between releases. Do not use in production.
+
 ## ⭐ Features
 - **SharedWorker SSE** — Single connection shared across browser tabs with automatic reconnection
 - **JWT Authentication** — Separate publisher/subscriber token generation with configurable secrets, algorithms (HMAC SHA-256/384/512), and TTL
